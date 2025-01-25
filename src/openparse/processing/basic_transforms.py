@@ -7,6 +7,7 @@ from typing import Dict, List, Literal, Type, TypeVar
 from PIL import Image
 
 from openparse.schemas import Bbox, ImageElement, Node, TableElement, TextElement
+from openparse.config import config
 
 E = TypeVar("E", TextElement, ImageElement, TableElement)
 
@@ -107,13 +108,16 @@ class CombineSlicedImages(ProcessingStep):
 
         new_nodes = []
         for page, page_nodes in nodes_by_page.items():
-            image_nodes = [e for e in page_nodes if e.variant == {"image"}]
-            if image_nodes:
-                image_elements = get_elements_of_type(image_nodes, ImageElement)
-                text_elements = get_elements_of_type(page_nodes, TextElement)
+            if config._parse_elements["images"]:
+                image_nodes = [e for e in page_nodes if e.variant == {"image"}]
+                if image_nodes:
+                    image_elements = get_elements_of_type(image_nodes, ImageElement)
+                    text_elements = get_elements_of_type(page_nodes, TextElement)
 
-                combined_image = self._combine_images_in_group(image_elements)
-                new_nodes.append(Node(elements=(combined_image, *text_elements)))
+                    combined_image = self._combine_images_in_group(image_elements)
+                    new_nodes.append(Node(elements=(combined_image, *text_elements)))
+                else:
+                    new_nodes.extend(page_nodes)
             else:
                 new_nodes.extend(page_nodes)
         return new_nodes
