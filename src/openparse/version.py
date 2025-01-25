@@ -1,4 +1,4 @@
-OPEN_PARSE_VERSION = "0.7.0"
+OPEN_PARSE_VERSION = "0.7.1"
 
 
 def version_info() -> str:

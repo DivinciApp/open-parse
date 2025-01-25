@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validat
 
 from openparse import consts
 from openparse.utils import num_tokens
+from openparse.config import config
 
 bullet_regex = re.compile(
     r"^(\s*[\-•](?!\*)|\s*\*(?!\*)|\s*\d+\.\s|\s*\([a-zA-Z0-9]+\)\s|\s*[a-zA-Z]\.\s)"
@@ -654,8 +655,12 @@ class Node(BaseModel):
         markdown_parts = []
         for element in self.elements:
             if element.variant == NodeVariant.TEXT:
+                if not config._parse_elements["text"]:
+                    return None
                 markdown_parts.append(element.text)
             elif element.variant == NodeVariant.IMAGE:
+                if not config._parse_elements["images"]:
+                    return None
                 image_data = element.image
                 mime_type = element.image_mimetype
                 if mime_type == "unknown":
@@ -663,6 +668,8 @@ class Node(BaseModel):
                 markdown_image = f"![Image](data:{mime_type};base64,{image_data})"
                 markdown_parts.append(markdown_image)
             elif element.variant == NodeVariant.TABLE:
+                if not config._parse_elements["tables"]:
+                    return None
                 markdown_parts.append(element.text)
         return "\n\n".join(markdown_parts)
 

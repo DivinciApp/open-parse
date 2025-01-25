@@ -8,6 +8,12 @@ class Config:
         self._device = "cpu"  # Default to CPU
         self._torch_available = False
         self._cuda_available = False
+        self._parse_elements = {
+            "images": True,
+            "tables": True,
+            "forms": True,
+            "text": True,
+        }
         try:
             import torch
 
