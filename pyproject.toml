@@ -9,10 +9,10 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 version = "0.7.0"
-authors = [{name = "Sergey Filimonov", email = "hello@sergey.fyi"}]
+authors = [{ name = "Sergey Filimonov", email = "hello@sergey.fyi" }]
 dependencies = [
     "PyMuPDF >= 1.23.2",
-    "pillow >= 8.3",
+    "pillow >= 11.1.0",
     "pydantic >= 2.0",
     "pypdf >= 4.0.0",
     "pdfminer.six >= 20200401",
@@ -27,12 +27,7 @@ repository = "https://github.com/Filimoa/open-parse"
 documentation = "https://filimoa.github.io/open-parse"
 
 [project.optional-dependencies]
-ml = [
-    "torch",
-    "torchvision",
-    "transformers",
-    "tokenizers",
-]
+ml = ["torch", "torchvision", "transformers", "tokenizers"]
 
 [project.scripts]
 openparse-download = "openparse.cli:download_unitable_weights"
@@ -44,12 +39,12 @@ select = [
     "F",  # pyflakes
     "I",  # isort
     "B",  # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
 ]
 ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "C901",  # too complex
-    "W191",  # indentation contains tabs
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "W191", # indentation contains tabs
 ]
