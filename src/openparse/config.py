@@ -9,9 +9,9 @@ class Config:
         self._torch_available = False
         self._cuda_available = False
         self._parse_elements = {
-            "images": True,
-            "tables": True,
-            "forms": True,
+            "images": False,
+            "tables": False,
+            "forms": False,
             "text": True,
         }
         try:

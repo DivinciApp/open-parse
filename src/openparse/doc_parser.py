@@ -12,6 +12,7 @@ from openparse.processing import (
 from openparse.schemas import Node, ParsedDocument, TableElement, TextElement
 
 from openparse.schemas import ImageElement
+from openparse.config import config
 
 IngestionPipelineType = TypeVar("IngestionPipelineType", bound=IngestionPipeline)
 
@@ -102,7 +103,7 @@ class DocumentParser:
 
         table_nodes = []
         table_args_obj = None
-        if self.table_args:
+        if self.table_args and config._parse_elements["tables"]:
             table_args_obj = _table_args_dict_to_model(self.table_args)
             table_elems = tables.ingest(doc, table_args_obj, verbose=self._verbose)
             table_nodes = self._elems_to_nodes(table_elems)
