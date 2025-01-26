@@ -104,6 +104,10 @@ class SemanticIngestionPipeline(IngestionPipeline):
         model: Optional[str] = None,
         **kwargs
     ) -> None:
+        super().__init__()
+        temp_config = Config()
+        temp_config._embeddings_provider = embeddings_provider
+
 
         self.transformations = [
             RemoveTextInsideTables(),
@@ -122,7 +126,7 @@ class SemanticIngestionPipeline(IngestionPipeline):
             RemoveNodesBelowNTokens(min_tokens=10),
             CombineBullets(),
             CombineNodesSemantically(
-                config=Config(_embeddings_provider=embeddings_provider),
+                config=temp_config,
                 model=model,
                 min_similarity=0.6,
                 max_tokens=max_tokens // 2,
