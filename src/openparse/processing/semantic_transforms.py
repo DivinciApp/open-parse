@@ -1,5 +1,4 @@
-from enum import Enum
-from typing import Protocol, List, Optional
+from typing import List 
 
 from openparse.schemas import Node
 from openparse.config import config
