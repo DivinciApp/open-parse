@@ -1,29 +1,60 @@
+import os
+import time
 import requests
+
 from typing import List, Literal, Union, Optional
+from requests.exceptions import RequestException
 
 OllamaModel = Literal["bge-large", "nomic-embed-text"]
+
 
 class OllamaEmbeddings:
     def __init__(
         self,
         model: OllamaModel = "bge-large",
-        api_url: str = "http://localhost:11434",
+        api_url: str = "http://local-ollama:11434",
         batch_size: int = 256,
+        max_retries: int = 3,
+        retry_delay: int = 2
     ):
         self.model = model
-        self.api_url = api_url.rstrip('/')
+        self.api_url = (
+            api_url or 
+            os.environ.get("OLLAMA_API_URL")
+        ).rstrip('/')
         self.batch_size = batch_size
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
+        self._check_connection()
+
+    def _check_connection(self) -> None:
+        """Test connection to Ollama service"""
+        for attempt in range(self.max_retries):
+            try:
+                response = requests.get(f"{self.api_url}/api/tags")
+                response.raise_for_status()
+                return
+            except RequestException as e:
+                if attempt == self.max_retries - 1:
+                    raise ConnectionError(
+                        f"Failed to connect to Ollama API at {self.api_url}. "
+                        f"Error: {str(e)}"
+                    )
+                time.sleep(self.retry_delay)
 
     def _get_embedding(self, text: str) -> List[float]:
-        response = requests.post(
-            f"{self.api_url}/api/embeddings",
-            json={
-                "model": self.model,
-                "prompt": text
-            }
-        )
-        response.raise_for_status()
-        return response.json()['embedding']
+        try:
+            response = requests.post(
+                f"{self.api_url}/api/embeddings",
+                json={
+                    "model": self.model,
+                    "prompt": text
+                }
+            )
+            response.raise_for_status()
+            return response.json()['embedding']
+        except RequestException as e:
+            raise ConnectionError(f"Failed to get embeddings: {str(e)}")
 
     def embed_many(self, texts: List[str]) -> List[List[float]]:
         res = []
