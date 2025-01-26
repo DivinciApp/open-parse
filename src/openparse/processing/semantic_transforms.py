@@ -15,12 +15,18 @@ from openparse.config import Config
 
 def create_embeddings_client(
     provider: str,
+    model: Optional[str] = None,
     **kwargs
 ) -> EmbeddingsClient:
+    clean_kwargs = {
+        k: v for k, v in kwargs.items()
+        if k not in ['embedding_provider', 'embeddings_provider']
+    }
+    
     if provider == EmbeddingsProvider.OPENAI:
-        return OpenAIEmbeddings(**kwargs)
+        return OpenAIEmbeddings(model=model, **clean_kwargs)
     elif provider == EmbeddingsProvider.OLLAMA:
-        return OllamaEmbeddings(**kwargs)
+        return OllamaEmbeddings(model=model, **clean_kwargs)
     raise ValueError(f"❌ Unknown embeddings provider: {provider}")
 
 class CombineNodesSemantically(ProcessingStep):
