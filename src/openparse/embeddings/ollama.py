@@ -2,7 +2,7 @@ import os
 import time
 import requests
 
-from typing import List, Literal, Union, Optional
+from typing import List, Literal
 from requests.exceptions import RequestException
 
 OllamaModel = Literal["bge-large", "nomic-embed-text"]
@@ -44,21 +44,24 @@ class OllamaEmbeddings:
 
     def _get_embedding(self, text: str) -> List[float]:
         try:
-            # Log request payload
+            # Debug logging
+            text_preview = text[:100] + "..." if len(text) > 100 else text
+            print(f"DEBUG: Text length: {len(text)}")
+            print(f"DEBUG: Text preview: {text_preview}")
+            
             payload = {
                 "model": self.model,
                 "prompt": text
             }
-            print(f"DEBUG: Sending request to {self.api_url}/api/embeddings with payload: {payload}")
+            print(f"DEBUG: Request payload: {payload}")
             
             response = requests.post(
                 f"{self.api_url}/api/embeddings",
                 json=payload
             )
             
-            # Log response
             print(f"DEBUG: Response status: {response.status_code}")
-            print(f"DEBUG: Response content: {response.text}")
+            print(f"DEBUG: Response content: {response.text[:500]}")
             
             response.raise_for_status()
             result = response.json()
