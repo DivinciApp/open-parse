@@ -113,18 +113,50 @@ parser.parse(
 Chunking documents is fundamentally about grouping similar semantic nodes together. By embedding the text of each node, we can then cluster them together based on their similarity.
 
 ```python
+# Example 1: Using OpenAI embeddings
 from openparse import processing, DocumentParser
 
+# OpenAI setup
 semantic_pipeline = processing.SemanticIngestionPipeline(
-    openai_api_key=OPEN_AI_KEY,
+    embeddings_provider="openai",
     model="text-embedding-3-large",
+    openai_api_key="sk-...",
     min_tokens=64,
     max_tokens=1024,
 )
-parser = DocumentParser(
-    processing_pipeline=semantic_pipeline,
+parser = DocumentParser(processing_pipeline=semantic_pipeline)
+parsed_content = parser.parse("document.pdf")
+```
+
+```python
+# Example 2: Using Ollama embeddings
+from openparse import processing, DocumentParser
+
+# Ollama setup
+semantic_pipeline = processing.SemanticIngestionPipeline(
+    embeddings_provider="ollama",
+    model="bge-large",  # or "nomic-embed-text"
+    min_tokens=64,
+    max_tokens=1024,
 )
-parsed_content = parser.parse(basic_doc_path)
+parser = DocumentParser(processing_pipeline=semantic_pipeline)
+parsed_content = parser.parse("document.pdf")
+```
+
+```python
+# Example 3: Using config overrides during parse
+from openparse import processing, DocumentParser
+
+pipeline = processing.SemanticIngestionPipeline(
+    min_tokens=64,
+    max_tokens=1024,
+)
+parser = DocumentParser(processing_pipeline=pipeline)
+parsed_content = parser.parse(
+    "document.pdf",
+    embeddings_provider="ollama",
+    parse_elements={"images": False, "tables": True}
+)
 ```
 
 **📓 Sample notebook** <a href="https://github.com/Filimoa/open-parse/blob/main/src/cookbooks/semantic_processing.ipynb" class="external-link" target="_blank">here</a>

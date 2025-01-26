@@ -1,4 +1,4 @@
-from typing import List 
+from typing import List, Optional
 
 from openparse.schemas import Node
 from openparse.config import config
@@ -11,6 +11,7 @@ from openparse.embeddings import (
 )
 
 from .basic_transforms import ProcessingStep
+from openparse.config import Config
 
 def create_embeddings_client(
     provider: str,
@@ -29,13 +30,17 @@ class CombineNodesSemantically(ProcessingStep):
 
     def __init__(
         self,
+        config: Optional[Config] = None,
+        model: Optional[str] = None,
         min_similarity: float = 0.8,
         max_tokens: int = 1000,
-        **embedding_kwargs
+        **kwargs
     ):
+        self.config = config or Config()
         self.embedding_client: EmbeddingsClient = create_embeddings_client(
-            provider=config._embeddings_provider,
-            **embedding_kwargs
+            provider=self.config._embeddings_provider,
+            model=model,
+            **kwargs
         )
         self.min_similarity = min_similarity
         self.max_tokens = max_tokens

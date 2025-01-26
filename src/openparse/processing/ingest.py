@@ -16,10 +16,9 @@ from openparse.processing.basic_transforms import (
 )
 from openparse.processing.semantic_transforms import (
     CombineNodesSemantically,
-    OpenAIEmbeddings,
 )
-from openparse.embeddings import EmbeddingModel, EmbeddingsProvider
 from openparse.schemas import Node
+from openparse.config import Config
 
 
 class IngestionPipeline(ABC):
@@ -101,7 +100,9 @@ class SemanticIngestionPipeline(IngestionPipeline):
         self,
         min_tokens: int = consts.TOKENIZATION_LOWER_LIMIT,
         max_tokens: int = consts.TOKENIZATION_UPPER_LIMIT,
-        embedding_provider: Optional[EmbeddingsProvider] = None,
+        embeddings_provider: str = "openai",
+        model: Optional[str] = None,
+        **kwargs
     ) -> None:
 
         self.transformations = [
@@ -121,14 +122,11 @@ class SemanticIngestionPipeline(IngestionPipeline):
             RemoveNodesBelowNTokens(min_tokens=10),
             CombineBullets(),
             CombineNodesSemantically(
-                embedding_client=embedding_provider,
+                config=Config(_embeddings_provider=embeddings_provider),
+                model=model,
                 min_similarity=0.6,
                 max_tokens=max_tokens // 2,
-            ),
-            CombineNodesSemantically(
-                embedding_client=embedding_provider,
-                min_similarity=0.55,
-                max_tokens=max_tokens,
+                **kwargs
             ),
             RemoveNodesBelowNTokens(min_tokens=min_tokens),
         ]
