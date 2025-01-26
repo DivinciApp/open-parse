@@ -23,12 +23,12 @@ def create_embeddings_client(
         if k not in ['embedding_provider', 'embeddings_provider']
     }
     
-    if provider == EmbeddingsProvider.OPENAI:
+    if provider == EmbeddingsProvider.OLLAMA:
+        return OllamaEmbeddings(model=model, **clean_kwargs)
+    elif provider == EmbeddingsProvider.OPENAI:
         if 'api_key' not in clean_kwargs:
             raise ValueError("OpenAI API key required for OpenAI embeddings")
         return OpenAIEmbeddings(model=model, **clean_kwargs)
-    elif provider == EmbeddingsProvider.OLLAMA:
-        return OllamaEmbeddings(model=model, **clean_kwargs)
     raise ValueError(f"❌ Unknown embeddings provider: {provider}")
 
 class CombineNodesSemantically(ProcessingStep):

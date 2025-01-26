@@ -108,12 +108,9 @@ class SemanticIngestionPipeline(IngestionPipeline):
         temp_config = Config()
         temp_config._embeddings_provider = embeddings_provider
 
-        # Remove provider-specific kwargs before passing to CombineNodesSemantically
-        embedding_kwargs = {
-            k: v for k, v in kwargs.items() 
-            if k not in ['embedding_provider', 'embeddings_provider']
-        }
-
+        embedding_kwargs = {}
+        if embeddings_provider == "openai":
+            embedding_kwargs['api_key'] = kwargs.get('openai_api_key')
 
         self.transformations = [
             RemoveTextInsideTables(),
