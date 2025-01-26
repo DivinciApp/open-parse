@@ -46,21 +46,22 @@ class OllamaEmbeddings:
             except RequestException as e:
                 if attempt == self.max_retries - 1:
                     raise ConnectionError(
-                        f"Failed to connect to Ollama API at {self.api_url}. "
-                        f"Error: {str(e)}"
+                        f"❌ Failed to connect to Ollama API at {self.api_url}. "
+                        f"❌ Error: {str(e)}"
                     )
                 time.sleep(self.retry_delay)
 
     def _get_embedding(self, text: str) -> List[float]:
         try:
             text_preview = text[:50] + "..." if len(text) > 50 else text
-            ollama_logger.info(f"Embedding text: {text_preview}")
+            ollama_logger.info(f"🤖 Embedding model: {self.model}")
+            ollama_logger.info(f"📄 Embedding text: {text_preview}")
             
             payload = {
                 "model": self.model,
                 "prompt": text
             }
-            ollama_logger.info(f"Request to: {self.api_url}/api/embeddings")
+            ollama_logger.info(f"🌐 Request to: {self.api_url}/api/embeddings")
             
             response = requests.post(
                 f"{self.api_url}/api/embeddings",
@@ -68,9 +69,9 @@ class OllamaEmbeddings:
             )
             
             if response.status_code != 200:
-                ollama_logger.error(f"Error response: {response.text}")
+                ollama_logger.error(f"❌ Error response: {response.text}")
             else:
-                ollama_logger.info("Embedding successful")
+                ollama_logger.info("✅ Embedding successful")
                 
             response.raise_for_status()
             result = response.json()
@@ -80,7 +81,7 @@ class OllamaEmbeddings:
                 
             return result['embedding']
         except Exception as e:
-            ollama_logger.error(f"Failed: {str(e)}")
+            ollama_logger.error(f"❌ Failed: {str(e)}")
             raise
     
     def embed_many(self, texts: List[str]) -> List[List[float]]:

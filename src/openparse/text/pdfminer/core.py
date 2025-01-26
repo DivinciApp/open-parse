@@ -202,7 +202,7 @@ def _process_png_image(e: LTImage, page_rotation: int = 0) -> Optional[bytes]:
         img.save(output, format="PNG")
         return output.getvalue()
     except Exception as ex:
-        logging.error(f"Error processing PNG image: {ex}")
+        logging.error(f"❌ Error processing PNG image: {ex}")
         return None
 
 

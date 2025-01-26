@@ -27,7 +27,7 @@ def create_embeddings_client(
         return OllamaEmbeddings(model=model, **clean_kwargs)
     elif provider == EmbeddingsProvider.OPENAI:
         if 'api_key' not in clean_kwargs:
-            raise ValueError("OpenAI API key required for OpenAI embeddings")
+            raise ValueError("❌ OpenAI API key required for OpenAI embeddings.")
         return OpenAIEmbeddings(model=model, **clean_kwargs)
     raise ValueError(f"❌ Unknown embeddings provider: {provider}")
 
