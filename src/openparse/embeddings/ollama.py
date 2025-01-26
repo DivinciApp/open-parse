@@ -1,9 +1,17 @@
 import os
 import time
 import requests
+import logging
+import sys
 
 from typing import List, Literal
 from requests.exceptions import RequestException
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
 
 OllamaModel = Literal["bge-large", "nomic-embed-text"]
 
@@ -44,35 +52,39 @@ class OllamaEmbeddings:
 
     def _get_embedding(self, text: str) -> List[float]:
         try:
-            # Debug logging
             text_preview = text[:100] + "..." if len(text) > 100 else text
-            print(f"DEBUG: Text length: {len(text)}")
-            print(f"DEBUG: Text preview: {text_preview}")
+            logging.debug(f"📐 Text length: {len(text)}")
+            logging.debug(f"🔍 Text preview: {text_preview}")
             
             payload = {
                 "model": self.model,
                 "prompt": text
             }
-            print(f"DEBUG: Request payload: {payload}")
+            logging.debug(f"🦙 Request to {self.api_url}/api/embeddings")
+            logging.debug(f"📦 Payload: {payload}")
             
             response = requests.post(
                 f"{self.api_url}/api/embeddings",
                 json=payload
             )
             
-            print(f"DEBUG: Response status: {response.status_code}")
-            print(f"DEBUG: Response content: {response.text[:500]}")
+            logging.debug(f"🦙 Response status: {response.status_code}")
+            logging.debug(f"📦 Response content: {response.text[:500]}")
             
+            if response.status_code != 200:
+                logging.error(f"Error response: {response.text}")
+                
             response.raise_for_status()
             result = response.json()
             
             if 'embedding' not in result:
-                raise ValueError(f"Unexpected response format: {result}")
+                raise ValueError(f"❌ Unexpected response format: {result}")
                 
             return result['embedding']
         except Exception as e:
-            print(f"DEBUG: Error details: {str(e)}")
-            raise ConnectionError(f"Failed to get embeddings: {str(e)}")
+            logging.error(f"❌ Error details: {str(e)}")
+            logging.error(f"❌ Last response content: {response.text if 'response' in locals() else '🤷🏻‍♂️ No response'}")
+            raise ConnectionError(f"❌ Failed to get embeddings: {str(e)}")
     
     def embed_many(self, texts: List[str]) -> List[List[float]]:
         res = []
