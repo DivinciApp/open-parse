@@ -24,6 +24,8 @@ def create_embeddings_client(
     }
     
     if provider == EmbeddingsProvider.OPENAI:
+        if 'api_key' not in clean_kwargs:
+            raise ValueError("OpenAI API key required for OpenAI embeddings")
         return OpenAIEmbeddings(model=model, **clean_kwargs)
     elif provider == EmbeddingsProvider.OLLAMA:
         return OllamaEmbeddings(model=model, **clean_kwargs)
@@ -43,10 +45,14 @@ class CombineNodesSemantically(ProcessingStep):
         **kwargs
     ):
         self.config = config or Config()
-        self.embedding_client: EmbeddingsClient = create_embeddings_client(
+        provider_kwargs = {}
+        if self.config._embeddings_provider == EmbeddingsProvider.OPENAI:
+            provider_kwargs['api_key'] = kwargs.get('openai_api_key')
+            
+        self.embedding_client = create_embeddings_client(
             provider=self.config._embeddings_provider,
             model=model,
-            **kwargs
+            **provider_kwargs
         )
         self.min_similarity = min_similarity
         self.max_tokens = max_tokens
