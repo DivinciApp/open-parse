@@ -19,9 +19,10 @@ from .ingest import (
 from .semantic_transforms import CombineNodesSemantically
 from openparse.embeddings.openai import OpenAIEmbeddings, EmbeddingModel as OpenAIModel
 from openparse.embeddings.ollama import OllamaEmbeddings, OllamaModel
+from openparse.embeddings.cloudflare import CloudflareEmbeddings, CloudflareModel
 
 EmbeddingModel = Union[OpenAIModel, OllamaModel]
-EmbeddingsProvider = Literal["openai", "ollama"]
+EmbeddingsProvider = Literal["openai", "ollama", "cloudflare"]
 
 __all__ = [
     "ProcessingStep",
@@ -40,6 +41,8 @@ __all__ = [
     "CombineNodesSemantically",
     'OpenAIEmbeddings',
     'OllamaEmbeddings',
+    'CloudflareEmbeddings',
+    'CloudflareModel',
     'EmbeddingModel',
     'EmbeddingsProvider',
 ]

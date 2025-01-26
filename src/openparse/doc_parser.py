@@ -86,7 +86,7 @@ class DocumentParser:
         file: Union[str, Path],
         ocr: bool = False,
         parse_elements: Optional[Dict[str, bool]] = None,
-        embeddings_provider: Optional[Literal["openai", "ollama"]] = None,
+        embeddings_provider: Optional[Literal["openai", "ollama", "cloudflare"]] = None,
     ) -> ParsedDocument:
         """
         Parse a given document.
@@ -95,7 +95,7 @@ class DocumentParser:
             file (Union[str, Path]): The path to the PDF file.
             ocr (bool): Whether to use OCR for text extraction. Not recommended unless necessary - inherently slower and less accurate. Note uses PyMuPDF for OCR.
             parse_elements: Override which elements to parse {"images": bool, "tables": bool, "forms": bool, "text": bool}
-            embeddings_provider: Override embeddings provider ("openai" or "ollama")
+            embeddings_provider: Override embeddings provider ("openai", "ollama", or "cloudflare")
         """
         # Create temporary config with overrides
         temp_config = config
