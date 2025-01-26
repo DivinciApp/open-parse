@@ -98,7 +98,7 @@ class DocumentParser:
             embeddings_provider: Override embeddings provider ("openai" or "ollama")
         """
         # Create temporary config with overrides
-        temp_config = config.copy()
+        temp_config = config
         if parse_elements:
             temp_config._parse_elements.update(parse_elements)
         if embeddings_provider:
