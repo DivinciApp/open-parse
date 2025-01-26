@@ -48,7 +48,7 @@ class OllamaEmbeddings:
                 f"{self.api_url}/api/embeddings",
                 json={
                     "model": self.model,
-                    "prompt": text
+                    "prompt": text  # Changed from 'text' to 'prompt' to match API
                 }
             )
             response.raise_for_status()
