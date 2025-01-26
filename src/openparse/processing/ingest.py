@@ -100,7 +100,7 @@ class SemanticIngestionPipeline(IngestionPipeline):
         self,
         min_tokens: int = consts.TOKENIZATION_LOWER_LIMIT,
         max_tokens: int = consts.TOKENIZATION_UPPER_LIMIT,
-        embeddings_provider: str = "openai",
+        embeddings_provider: str = "ollama",
         model: Optional[str] = None,
         **kwargs
     ) -> None:
