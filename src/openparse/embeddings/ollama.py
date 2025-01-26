@@ -2,16 +2,17 @@ import os
 import time
 import requests
 import logging
-import sys
 
 from typing import List, Literal
 from requests.exceptions import RequestException
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    stream=sys.stdout
-)
+# Create custom logger for Ollama
+ollama_logger = logging.getLogger('ollama')
+ollama_logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - OLLAMA - %(message)s')
+handler.setFormatter(formatter)
+ollama_logger.addHandler(handler)
 
 OllamaModel = Literal["bge-large", "nomic-embed-text"]
 
@@ -50,29 +51,27 @@ class OllamaEmbeddings:
                     )
                 time.sleep(self.retry_delay)
 
+class OllamaEmbeddings:
     def _get_embedding(self, text: str) -> List[float]:
         try:
-            text_preview = text[:100] + "..." if len(text) > 100 else text
-            logging.debug(f"📐 Text length: {len(text)}")
-            logging.debug(f"🔍 Text preview: {text_preview}")
+            text_preview = text[:50] + "..." if len(text) > 50 else text
+            ollama_logger.info(f"Embedding text: {text_preview}")
             
             payload = {
                 "model": self.model,
                 "prompt": text
             }
-            logging.debug(f"🦙 Request to {self.api_url}/api/embeddings")
-            logging.debug(f"📦 Payload: {payload}")
+            ollama_logger.info(f"Request to: {self.api_url}/api/embeddings")
             
             response = requests.post(
                 f"{self.api_url}/api/embeddings",
                 json=payload
             )
             
-            logging.debug(f"🦙 Response status: {response.status_code}")
-            logging.debug(f"📦 Response content: {response.text[:500]}")
-            
             if response.status_code != 200:
-                logging.error(f"Error response: {response.text}")
+                ollama_logger.error(f"Error response: {response.text}")
+            else:
+                ollama_logger.info("Embedding successful")
                 
             response.raise_for_status()
             result = response.json()
@@ -82,9 +81,8 @@ class OllamaEmbeddings:
                 
             return result['embedding']
         except Exception as e:
-            logging.error(f"❌ Error details: {str(e)}")
-            logging.error(f"❌ Last response content: {response.text if 'response' in locals() else '🤷🏻‍♂️ No response'}")
-            raise ConnectionError(f"❌ Failed to get embeddings: {str(e)}")
+            ollama_logger.error(f"Failed: {str(e)}")
+            raise
     
     def embed_many(self, texts: List[str]) -> List[List[float]]:
         res = []
