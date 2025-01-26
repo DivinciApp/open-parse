@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Literal, TypedDict, TypeVar, Union, Optional
+from typing import List, Literal, TypedDict, TypeVar, Union, Optional, Dict
 
 from openparse import consts, tables, text
 from openparse._types import NOT_GIVEN, NotGiven
