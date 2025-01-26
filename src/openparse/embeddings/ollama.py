@@ -10,7 +10,7 @@ from requests.exceptions import RequestException
 ollama_logger = logging.getLogger('ollama')
 ollama_logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - OLLAMA - %(message)s')
+formatter = logging.Formatter('%(asctime)s - 🦙OLLAMA - %(message)s')
 handler.setFormatter(formatter)
 ollama_logger.addHandler(handler)
 
@@ -54,8 +54,8 @@ class OllamaEmbeddings:
     def _get_embedding(self, text: str) -> List[float]:
         try:
             text_preview = text[:50] + "..." if len(text) > 50 else text
-            ollama_logger.info(f"🤖 Embedding model: {self.model}")
-            ollama_logger.info(f"📄 Embedding text: {text_preview}")
+            # ollama_logger.info(f"🤖 Embedding model: {self.model}")
+            # ollama_logger.info(f"📄 Embedding text: {text_preview}")
             
             payload = {
                 "model": self.model,
@@ -70,8 +70,6 @@ class OllamaEmbeddings:
             
             if response.status_code != 200:
                 ollama_logger.error(f"❌ Error response: {response.text}")
-            else:
-                ollama_logger.info("✅ Embedding successful")
                 
             response.raise_for_status()
             result = response.json()

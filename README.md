@@ -159,6 +159,38 @@ parsed_content = parser.parse(
 )
 ```
 
+#### Cloudflare Embeddings
+```python
+# Set environment variables first
+import os
+os.environ["CLOUDFLARE_API_KEY"] = "your-api-key"
+os.environ["CLOUDFLARE_ACCOUNT_ID"] = "your-account-id"
+
+from openparse.processing import SemanticIngestionPipeline
+
+# Cloudflare setup
+semantic_pipeline = SemanticIngestionPipeline(
+    embeddings_provider="cloudflare",
+    model="@cf/baai/bge-base-en-v1.5",  # Cloudflare's BGE model
+    min_tokens=64,
+    max_tokens=1024,
+    cloudflare_api_token=os.getenv("CLOUDFLARE_API_KEY"),
+    cloudflare_account_id=os.getenv("CLOUDFLARE_ACCOUNT_ID")
+)
+```
+
+```python
+# Cloudflare alternative direct kwargs setup
+semantic_pipeline = SemanticIngestionPipeline(
+    embeddings_provider="cloudflare",
+    model="@cf/baai/bge-base-en-v1.5",
+    min_tokens=64,
+    max_tokens=1024,
+    cloudflare_api_token="your-api-token",
+    cloudflare_account_id="your-account-id"
+)
+```
+
 **📓 Sample notebook** <a href="https://github.com/Filimoa/open-parse/blob/main/src/cookbooks/semantic_processing.ipynb" class="external-link" target="_blank">here</a>
 
 #### Serializing Results

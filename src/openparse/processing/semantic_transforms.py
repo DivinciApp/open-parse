@@ -1,12 +1,12 @@
 from typing import List, Optional
 
 from openparse.schemas import Node
-from openparse.config import config
 from openparse.embeddings import (
     EmbeddingsProvider,
     EmbeddingsClient,
     OpenAIEmbeddings,
     OllamaEmbeddings,
+    CloudflareEmbeddings,
     cosine_similarity
 )
 
@@ -29,6 +29,10 @@ def create_embeddings_client(
         if 'api_key' not in clean_kwargs:
             raise ValueError("❌ OpenAI API key required for OpenAI embeddings.")
         return OpenAIEmbeddings(model=model, **clean_kwargs)
+    elif provider == EmbeddingsProvider.CLOUDFLARE:
+        if 'api_token' not in clean_kwargs or 'account_id' not in clean_kwargs:
+            raise ValueError("❌ Cloudflare API token and account ID required.")
+        return CloudflareEmbeddings(model=model, **clean_kwargs)
     raise ValueError(f"❌ Unknown embeddings provider: {provider}")
 
 class CombineNodesSemantically(ProcessingStep):
