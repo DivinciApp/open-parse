@@ -1,0 +1,39 @@
+import requests
+from typing import List, Literal, Union, Optional
+
+OllamaModel = Literal["bge-large", "nomic-embed-text"]
+
+class OllamaEmbeddings:
+    def __init__(
+        self,
+        model: OllamaModel = "bge-large",
+        api_url: str = "http://localhost:11434",
+        batch_size: int = 256,
+    ):
+        self.model = model
+        self.api_url = api_url.rstrip('/')
+        self.batch_size = batch_size
+
+    def _get_embedding(self, text: str) -> List[float]:
+        response = requests.post(
+            f"{self.api_url}/api/embeddings",
+            json={
+                "model": self.model,
+                "prompt": text
+            }
+        )
+        response.raise_for_status()
+        return response.json()['embedding']
+
+    def embed_many(self, texts: List[str]) -> List[List[float]]:
+        res = []
+        non_empty_texts = [text for text in texts if text]
+
+        for i in range(0, len(non_empty_texts), self.batch_size):
+            batch_texts = non_empty_texts[i : i + self.batch_size]
+            batch_embeddings = [self._get_embedding(text) for text in batch_texts]
+            res.extend(batch_embeddings)
+
+        # Pad empty texts with zeros
+        embedding_size = len(res[0]) if res else 1
+        return res + [[0.0] * embedding_size] * (len(texts) - len(non_empty_texts))

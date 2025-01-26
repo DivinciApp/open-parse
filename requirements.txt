@@ -10,3 +10,4 @@ torch
 transformers
 torchvision
 torchtext
+requests

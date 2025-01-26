@@ -72,6 +72,40 @@ for node in parsed_basic_doc.nodes:
     print(node)
 ```
 
+##### parse() usage:
+###### Basic usage with only required args
+``` python
+parser.parse("document.pdf")
+```
+
+###### Override both config settings
+``` python
+parser.parse(
+    "document.pdf",
+    ocr=False,
+    parse_elements={"images": False, "tables": True, "forms": True, "text": True},
+    embeddings_provider="ollama"
+)
+```
+
+###### Override only embeddings provider
+``` python
+parser.parse(
+    "document.pdf",
+    ocr=False,
+    embeddings_provider="ollama"
+)
+```
+
+###### Override only parse elements
+``` python
+parser.parse(
+    "document.pdf",
+    ocr=False,
+    parse_elements={"images": False, "tables": False}
+)
+```
+
 **📓 Try the sample notebook** <a href="https://colab.research.google.com/drive/1Z5B5gsnmhFKEFL-5yYIcoox7-jQao8Ep?usp=sharing" class="external-link" target="_blank">here</a>
 
 #### Semantic Processing Example

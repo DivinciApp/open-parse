@@ -14,6 +14,7 @@ class Config:
             "forms": False,
             "text": True,
         }
+        self._embeddings_provider = "ollama" # openai
         try:
             import torch
 

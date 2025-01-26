@@ -19,6 +19,7 @@ dependencies = [
     "tiktoken >= 0.3",
     "openai >= 1.0.0",
     "numpy",
+    "requests",
 ]
 
 [project.urls]

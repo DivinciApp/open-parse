@@ -85,6 +85,8 @@ class DocumentParser:
         self,
         file: Union[str, Path],
         ocr: bool = False,
+        parse_elements: Optional[Dict[str, bool]] = None,
+        embeddings_provider: Optional[Literal["openai", "ollama"]] = None,
     ) -> ParsedDocument:
         """
         Parse a given document.
@@ -92,7 +94,15 @@ class DocumentParser:
         Args:
             file (Union[str, Path]): The path to the PDF file.
             ocr (bool): Whether to use OCR for text extraction. Not recommended unless necessary - inherently slower and less accurate. Note uses PyMuPDF for OCR.
+            parse_elements: Override which elements to parse {"images": bool, "tables": bool, "forms": bool, "text": bool}
+            embeddings_provider: Override embeddings provider ("openai" or "ollama")
         """
+        # Create temporary config with overrides
+        temp_config = config.copy()
+        if parse_elements:
+            temp_config._parse_elements.update(parse_elements)
+        if embeddings_provider:
+            temp_config._embeddings_provider = embeddings_provider
         doc = Pdf(file)
 
         text_engine: Literal["pdfminer", "pymupdf"] = (
@@ -103,7 +113,7 @@ class DocumentParser:
 
         table_nodes = []
         table_args_obj = None
-        if self.table_args and config._parse_elements["tables"]:
+        if self.table_args and temp_config._parse_elements["tables"]:
             table_args_obj = _table_args_dict_to_model(self.table_args)
             table_elems = tables.ingest(doc, table_args_obj, verbose=self._verbose)
             table_nodes = self._elems_to_nodes(table_elems)
