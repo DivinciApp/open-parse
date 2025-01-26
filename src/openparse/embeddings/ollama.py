@@ -44,18 +44,33 @@ class OllamaEmbeddings:
 
     def _get_embedding(self, text: str) -> List[float]:
         try:
+            # Log request payload
+            payload = {
+                "model": self.model,
+                "prompt": text
+            }
+            print(f"DEBUG: Sending request to {self.api_url}/api/embeddings with payload: {payload}")
+            
             response = requests.post(
                 f"{self.api_url}/api/embeddings",
-                json={
-                    "model": self.model,
-                    "prompt": text  # Changed from 'text' to 'prompt' to match API
-                }
+                json=payload
             )
+            
+            # Log response
+            print(f"DEBUG: Response status: {response.status_code}")
+            print(f"DEBUG: Response content: {response.text}")
+            
             response.raise_for_status()
-            return response.json()['embedding']
-        except RequestException as e:
+            result = response.json()
+            
+            if 'embedding' not in result:
+                raise ValueError(f"Unexpected response format: {result}")
+                
+            return result['embedding']
+        except Exception as e:
+            print(f"DEBUG: Error details: {str(e)}")
             raise ConnectionError(f"Failed to get embeddings: {str(e)}")
-
+    
     def embed_many(self, texts: List[str]) -> List[List[float]]:
         res = []
         non_empty_texts = [text for text in texts if text]
