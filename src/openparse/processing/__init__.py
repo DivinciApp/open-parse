@@ -1,3 +1,4 @@
+from typing import Literal, Union
 from .basic_transforms import (
     CombineBullets,
     CombineHeadingsWithClosestText,
@@ -16,6 +17,11 @@ from .ingest import (
     SemanticIngestionPipeline,
 )
 from .semantic_transforms import CombineNodesSemantically
+from openparse.embeddings.openai import OpenAIEmbeddings, EmbeddingModel as OpenAIModel
+from openparse.embeddings.ollama import OllamaEmbeddings, OllamaModel
+
+EmbeddingModel = Union[OpenAIModel, OllamaModel]
+EmbeddingsProvider = Literal["openai", "ollama"]
 
 __all__ = [
     "ProcessingStep",
@@ -32,4 +38,8 @@ __all__ = [
     "NoOpIngestionPipeline",
     "RemoveNodesBelowNTokens",
     "CombineNodesSemantically",
+    'OpenAIEmbeddings',
+    'OllamaEmbeddings',
+    'EmbeddingModel',
+    'EmbeddingsProvider',
 ]
