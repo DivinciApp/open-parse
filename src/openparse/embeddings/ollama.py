@@ -51,7 +51,6 @@ class OllamaEmbeddings:
                     )
                 time.sleep(self.retry_delay)
 
-class OllamaEmbeddings:
     def _get_embedding(self, text: str) -> List[float]:
         try:
             text_preview = text[:50] + "..." if len(text) > 50 else text
