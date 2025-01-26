@@ -1,20 +1,17 @@
 from enum import Enum
-from typing import Protocol, List
+from typing import Protocol, List, Optional
 
 from openparse.schemas import Node
 from openparse.config import config
+from openparse.embeddings import (
+    EmbeddingsProvider,
+    EmbeddingsClient,
+    OpenAIEmbeddings,
+    OllamaEmbeddings,
+    cosine_similarity
+)
 
 from .basic_transforms import ProcessingStep
-from openparse.embeddings.openai import OpenAIEmbeddings, cosine_similarity
-from openparse.embeddings.ollama import OllamaEmbeddings
-
-class EmbeddingsProvider(str, Enum):
-    OPENAI = "openai"
-    OLLAMA = "ollama"
-
-class EmbeddingsClient(Protocol):
-    def embed_many(self, texts: List[str]) -> List[List[float]]:
-        ...
 
 def create_embeddings_client(
     provider: str,
