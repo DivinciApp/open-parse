@@ -25,7 +25,7 @@ class OpenAIEmbeddings:
         api_key = kwargs.get('api_key', None)
 
         if not api_key:
-            raise ValueError("❌ OpenAI API key is required.")
+            raise ValueError("❌ OpenAI API key (api_key) is required.")
 
         """
         Used to generate embeddings for Nodes.

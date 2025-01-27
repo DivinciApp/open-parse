@@ -30,8 +30,10 @@ class CloudflareEmbeddings:
     ):
         api_token = kwargs.get('api_token', None)
         account_id = kwargs.get('api_token', None)
-        if not api_token or not account_id:
-            raise ValueError("❌ Cloudflare API token and account ID required.")
+        if not api_token:
+            raise ValueError("❌ Cloudflare API token (api_token) required.")
+        if not account_id:
+            raise ValueError("❌ Cloudflare Account ID (account_id) required.")
 
         self.model = model
         self.api_token = api_token

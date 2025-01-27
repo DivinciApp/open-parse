@@ -30,7 +30,7 @@ class OllamaEmbeddings:
     ):
         api_url = kwargs.get('api_url', None)
         if not api_url:
-            raise ValueError("❌ Ollama API URL required.")
+            raise ValueError("❌ Ollama API URL (api_url) required.")
         self.model = model
         self.api_url = api_url.rstrip('/')
         self.batch_size = batch_size
