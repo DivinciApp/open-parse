@@ -49,14 +49,11 @@ class CombineNodesSemantically(ProcessingStep):
         **kwargs
     ):
         self.config = config or Config()
-        provider_kwargs = {}
-        if self.config._embeddings_provider == EmbeddingsProvider.OPENAI:
-            provider_kwargs['api_key'] = kwargs.get('openai_api_key')
             
         self.embedding_client = create_embeddings_client(
             provider=self.config._embeddings_provider,
             model=model,
-            **provider_kwargs
+            **kwargs
         )
         self.min_similarity = min_similarity
         self.max_tokens = max_tokens
