@@ -3,7 +3,7 @@ import time
 import requests
 import logging
 
-from typing import List, Literal
+from typing import List, Literal, Optional
 from requests.exceptions import RequestException
 
 # Create custom logger for Ollama
@@ -21,16 +21,15 @@ class OllamaEmbeddings:
     def __init__(
         self,
         model: OllamaModel = "bge-large",
-        api_url: str = "http://local-ollama:11434",
+        api_url: Optional[str] = None,
         batch_size: int = 256,
         max_retries: int = 3,
         retry_delay: int = 2
     ):
+        if not api_url:
+            raise ValueError("❌ Ollama API URL required.")
         self.model = model
-        self.api_url = (
-            api_url or 
-            os.environ.get("OLLAMA_API_URL")
-        ).rstrip('/')
+        self.api_url = api_url.rstrip('/')
         self.batch_size = batch_size
         self.max_retries = max_retries
         self.retry_delay = retry_delay

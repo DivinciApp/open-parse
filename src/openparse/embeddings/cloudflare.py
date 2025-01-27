@@ -28,16 +28,15 @@ class CloudflareEmbeddings:
         max_retries: int = 3,
         retry_delay: int = 2
     ):
+        if not api_token or not account_id:
+            raise ValueError("❌ Cloudflare API token and account ID required.")
         self.model = model
-        self.api_token = api_token or os.environ.get("CLOUDFLARE_API_TOKEN")
-        self.account_id = account_id or os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+        self.api_token = api_token
+        self.account_id = account_id
         self.batch_size = min(batch_size, 100)  # CF max batch size
         self.max_retries = max_retries
         self.retry_delay = retry_delay
-        
-        if not self.api_token or not self.account_id:
-            raise ValueError("❌ Cloudflare API token and account ID required.")
-            
+
         self.base_url = f"https://api.cloudflare.com/client/v4/accounts/{self.account_id}/ai/run"
         self._check_connection()
         
