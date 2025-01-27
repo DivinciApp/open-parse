@@ -87,12 +87,22 @@ class CloudflareEmbeddings:
                 cf_logger.error(f"❌ Error response: {response.text}")
             
             response.raise_for_status()
-            result = response.json()
+            json = response.json()
             
-            if not result.get('data') or not result['data'][0]:
-                raise ValueError(f"❌ Unexpected response format: {result}")
-                
-            return result['data'][0]
+            if json.get('success') is not True:
+                raise ValueError(f"❌ Error from Cloudflare API: {json.get('errors')}")
+
+            result = json.get('result')
+            if not result:
+                raise ValueError(f"❌ Unexpected response format: {json}")
+            dataList = result.get('data')
+            if not dataList:
+                raise ValueError(f"❌ Unexpected response format: {json}")
+            data = dataList[0]
+            if not data:
+                raise ValueError(f"❌ Unexpected response format: {json}")
+
+            return data
             
         except Exception as e:
             cf_logger.error(f"❌ Failed: {str(e)}")
