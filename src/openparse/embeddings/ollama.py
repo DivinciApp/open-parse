@@ -21,11 +21,14 @@ class OllamaEmbeddings:
     def __init__(
         self,
         model: OllamaModel = "bge-large",
-        api_url: Optional[str] = None,
         batch_size: int = 256,
         max_retries: int = 3,
-        retry_delay: int = 2
+        retry_delay: int = 2,
+
+        **kwargs
+
     ):
+        api_url = kwargs.get('api_url', None)
         if not api_url:
             raise ValueError("❌ Ollama API URL required.")
         self.model = model

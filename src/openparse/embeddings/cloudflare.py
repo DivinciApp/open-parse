@@ -22,14 +22,17 @@ class CloudflareEmbeddings:
     def __init__(
         self,
         model: CloudflareModel = "@cf/baai/bge-base-en-v1.5",
-        api_token: Optional[str] = None,
-        account_id: Optional[str] = None,
         batch_size: int = 100,
         max_retries: int = 3,
-        retry_delay: int = 2
+        retry_delay: int = 2,
+
+        **kwargs
     ):
+        api_token = kwargs.get('api_token', None)
+        account_id = kwargs.get('api_token', None)
         if not api_token or not account_id:
             raise ValueError("❌ Cloudflare API token and account ID required.")
+
         self.model = model
         self.api_token = api_token
         self.account_id = account_id

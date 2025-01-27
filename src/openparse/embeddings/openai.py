@@ -16,13 +16,14 @@ class OpenAIEmbeddings:
     def __init__(
         self,
         model: EmbeddingModel,
-
-        api_key: Optional[str] = None,
-
         batch_size: int = 256,
         max_retries: int = 3,
-        retry_delay: int = 2
+        retry_delay: int = 2,
+
+        **kwargs
     ):
+        api_key = kwargs.get('api_key', None)
+
         if not api_key:
             raise ValueError("❌ OpenAI API key is required.")
 
