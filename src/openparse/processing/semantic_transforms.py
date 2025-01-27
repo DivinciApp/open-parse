@@ -49,6 +49,8 @@ class CombineNodesSemantically(ProcessingStep):
         **kwargs
     ):
         self.config = config or Config()
+
+        kwargs.pop("provider", None)
             
         self.embedding_client = create_embeddings_client(
             provider=self.config._embeddings_provider,
