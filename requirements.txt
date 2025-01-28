@@ -11,3 +11,4 @@ transformers
 torchvision
 torchtext
 requests
+backoff
