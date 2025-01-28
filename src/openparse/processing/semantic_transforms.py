@@ -19,20 +19,19 @@ def create_embeddings_client(
     **kwargs
 ) -> EmbeddingsClient:
     clean_kwargs = {
-        k: v for k, v in kwargs.items()
-        if k not in ['embedding_provider', 'embeddings_provider']
+        k: v
+        for k, v in kwargs.items()
+        if not k in ["provider", 'embedding_provider', 'embeddings_provider']
     }
+
+    print(f"🤖 Embedding provider: {provider}")
     
     if provider == EmbeddingsProvider.OLLAMA:
-        return OllamaEmbeddings(model=model, **clean_kwargs)
+        return OllamaEmbeddings(**clean_kwargs)
     elif provider == EmbeddingsProvider.OPENAI:
-        if 'api_key' not in clean_kwargs:
-            raise ValueError("❌ OpenAI API key required for OpenAI embeddings.")
-        return OpenAIEmbeddings(model=model, **clean_kwargs)
+        return OpenAIEmbeddings(**clean_kwargs)
     elif provider == EmbeddingsProvider.CLOUDFLARE:
-        if 'api_token' not in clean_kwargs or 'account_id' not in clean_kwargs:
-            raise ValueError("❌ Cloudflare API token and account ID required.")
-        return CloudflareEmbeddings(model=model, **clean_kwargs)
+        return CloudflareEmbeddings(**clean_kwargs)
     raise ValueError(f"❌ Unknown embeddings provider: {provider}")
 
 class CombineNodesSemantically(ProcessingStep):
@@ -49,14 +48,13 @@ class CombineNodesSemantically(ProcessingStep):
         **kwargs
     ):
         self.config = config or Config()
-        provider_kwargs = {}
-        if self.config._embeddings_provider == EmbeddingsProvider.OPENAI:
-            provider_kwargs['api_key'] = kwargs.get('openai_api_key')
+
+        kwargs.pop("provider", None)
             
         self.embedding_client = create_embeddings_client(
             provider=self.config._embeddings_provider,
             model=model,
-            **provider_kwargs
+            **kwargs
         )
         self.min_similarity = min_similarity
         self.max_tokens = max_tokens

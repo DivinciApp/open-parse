@@ -1,4 +1,4 @@
-from typing import List, Literal, Union
+from typing import List, Literal, Union, Optional
 
 import numpy as np
 
@@ -16,9 +16,17 @@ class OpenAIEmbeddings:
     def __init__(
         self,
         model: EmbeddingModel,
-        api_key: str,
         batch_size: int = 256,
+        max_retries: int = 3,
+        retry_delay: int = 2,
+
+        **kwargs
     ):
+        api_key = kwargs.get('api_key', None)
+
+        if not api_key:
+            raise ValueError("❌ OpenAI API key (api_key) is required.")
+
         """
         Used to generate embeddings for Nodes.
 

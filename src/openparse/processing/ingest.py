@@ -108,10 +108,6 @@ class SemanticIngestionPipeline(IngestionPipeline):
         temp_config = Config()
         temp_config._embeddings_provider = embeddings_provider
 
-        embedding_kwargs = {}
-        if embeddings_provider == "openai":
-            embedding_kwargs['api_key'] = kwargs.get('openai_api_key')
-
         self.transformations = [
             RemoveTextInsideTables(),
             CombineSlicedImages(),
@@ -133,7 +129,7 @@ class SemanticIngestionPipeline(IngestionPipeline):
                 model=model,
                 min_similarity=0.6,
                 max_tokens=max_tokens // 2,
-                **embedding_kwargs
+                **kwargs
             ),
             RemoveNodesBelowNTokens(min_tokens=min_tokens),
         ]

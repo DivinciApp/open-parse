@@ -1,4 +1,5 @@
 import os
+import time
 import logging
 from typing import List, Literal, Optional
 import requests
@@ -26,23 +27,27 @@ class CloudflareEmbeddings:
     def __init__(
         self,
         model: CloudflareModel = "@cf/baai/bge-base-en-v1.5",
-        api_token: Optional[str] = None,
-        account_id: Optional[str] = None,
         batch_size: int = 100,
         max_retries: int = 3,
-        retry_delay: int = 2
+        retry_delay: int = 2,
+
+        **kwargs
     ):
+        api_token = kwargs.get('api_token', None)
+        account_id = kwargs.get('account_id', None)
+        if not api_token:
+            raise ValueError("❌ Cloudflare API token (api_token) required.")
+        if not account_id:
+            raise ValueError("❌ Cloudflare Account ID (account_id) required.")
+
         self.model = model
         self.session = self._create_session()
-        self.api_token = api_token or os.environ.get("CLOUDFLARE_API_TOKEN")
-        self.account_id = account_id or os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+        self.api_token = api_token
+        self.account_id = account_id
         self.batch_size = min(batch_size, 100)  # CF max batch size
         self.max_retries = max_retries
         self.retry_delay = retry_delay
-        
-        if not self.api_token or not self.account_id:
-            raise ValueError("❌ Cloudflare API token and account ID required.")
-            
+
         self.base_url = f"https://api.cloudflare.com/client/v4/accounts/{self.account_id}/ai/run"
         self._check_connection()
         
@@ -107,12 +112,22 @@ class CloudflareEmbeddings:
                 cf_logger.error(f"Error response: {response.text}")
             
             response.raise_for_status()
-            result = response.json()
+            json = response.json()
             
-            if not result.get('data') or not result['data'][0]:
-                raise ValueError(f"Unexpected response format: {result}")
-                
-            return result['data'][0]
+            if json.get('success') is not True:
+                raise ValueError(f"❌ Error from Cloudflare API: {json.get('errors')}")
+
+            result = json.get('result')
+            if not result:
+                raise ValueError(f"❌ Unexpected response format: {json}")
+            dataList = result.get('data')
+            if not dataList:
+                raise ValueError(f"❌ Unexpected response format: {json}")
+            data = dataList[0]
+            if not data:
+                raise ValueError(f"❌ Unexpected response format: {json}")
+
+            return data
             
         except Exception as e:
             cf_logger.error(f"Failed: {str(e)}")
