@@ -1,7 +1,6 @@
-import os
 import time
 import logging
-from typing import List, Literal, Optional
+from typing import List, Literal
 import requests
 from requests.exceptions import RequestException, SSLError
 import backoff
@@ -29,7 +28,6 @@ class CloudflareEmbeddings:
         batch_size: int = 100,
         max_retries: int = 3,
         retry_delay: int = 2,
-
         **kwargs
     ):
         api_token = kwargs.get('api_token', None)
@@ -39,15 +37,19 @@ class CloudflareEmbeddings:
         if not account_id:
             raise ValueError("❌ Cloudflare Account ID (account_id) required.")
 
+        # Set instance variables first
         self.model = model
-        self.session = self._create_session()
         self.api_token = api_token
         self.account_id = account_id
-        self.batch_size = min(batch_size, 100)  # CF max batch size
+        self.batch_size = batch_size
         self.max_retries = max_retries
         self.retry_delay = retry_delay
-
         self.base_url = f"https://api.cloudflare.com/client/v4/accounts/{self.account_id}/ai/run"
+        
+        # Create session after setting variables
+        self.session = self._create_session()
+        
+        # Test connection
         self._check_connection()
         
     def _check_connection(self) -> None:
