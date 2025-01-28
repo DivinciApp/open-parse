@@ -11,7 +11,7 @@ from requests.adapters import HTTPAdapter
 cf_logger = logging.getLogger('cloudflare')
 cf_logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - 🟠☁️CLOUDFLARE - %(message)s')
+formatter = logging.Formatter('%(asctime)s - 🟠☁️ CLOUDFLARE - %(message)s')
 handler.setFormatter(formatter)
 cf_logger.addHandler(handler)
 
