@@ -3,11 +3,10 @@ import time
 import logging
 from typing import List, Literal, Optional
 import requests
-import time
+from requests.exceptions import RequestException, SSLError
 import backoff
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-from requests.exceptions import RequestException
 
 # Logger setup
 cf_logger = logging.getLogger('cloudflare')
@@ -92,7 +91,7 @@ class CloudflareEmbeddings:
 
     @backoff.on_exception(
         backoff.expo,
-        (requests.exceptions.RequestException, SSLError),
+        (RequestException, SSLError),
         max_tries=5
     )
 
