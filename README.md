@@ -3,6 +3,14 @@
 </p>
 <br/>
 
+[![CodeQL](https://github.com/DivinciApp/open-parse/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/DivinciApp/open-parse/actions/workflows/github-code-scanning/codeql)
+
+*Divinci™ fork of Open-Parse 🤖🖤
+
+This fork supports Ollama and Cloudflare, alongside the exisiting OpenAI embeddings.
+
+_ _ _
+
 **Easily chunk complex documents the same way a human would.**  
 
 Chunking documents is a challenging task that underpins any RAG system.  High quality results are critical to a sucessful AI application, yet most open-source libraries are limited in their ability to handle complex documents.  
@@ -289,9 +297,14 @@ https://github.com/Filimoa/open-parse/tree/main/src/cookbooks
 
 ## Documentation
 
-https://filimoa.github.io/open-parse/
+[documentation](https://open-parse.readthedocs.io/en/latest/) 
+[Processing Flow](./process-flow.md)
 
-## Sponsors
+_ _ _
+
+#### From original repository:
+
+#### Sponsors
 
 <!-- sponsors -->
 
