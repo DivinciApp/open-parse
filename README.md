@@ -4,6 +4,7 @@
 <br/>
 
 [![CodeQL](https://github.com/DivinciApp/open-parse/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/DivinciApp/open-parse/actions/workflows/github-code-scanning/codeql)
+[![Test](https://github.com/DivinciAI/open-parse/actions/workflows/test.yml/badge.svg)](https://github.com/DivinciAI/open-parse/actions/workflows/test.yml)
 
 Divinci™ fork of Open-Parse 🤖🖤
 
