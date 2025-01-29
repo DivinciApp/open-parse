@@ -22,6 +22,8 @@ dependencies = [
     "requests",
     "backoff",
     "markitdown",
+    "sphinx,
+    sphinx-rtd-theme",
 ]
 
 [project.urls]

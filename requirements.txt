@@ -5,6 +5,8 @@ pypdf>=4.0.0
 pdfminer.six>=20200401
 tiktoken>=0.3
 openai>=1.0.0
+sphinx>=7.0.0
+sphinx-rtd-theme>=2.0.0
 numpy
 torch
 transformers
