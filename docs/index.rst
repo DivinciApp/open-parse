@@ -5,14 +5,14 @@ Welcome to OpenParse's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   readme
-   api/modules
+   README.md
+   api/openparse
 
 API Reference
 ------------
 
 .. autosummary::
-   :toctree: _autosummary
+   :toctree: generated
    :recursive:
 
    openparse
