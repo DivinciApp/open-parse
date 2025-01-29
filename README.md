@@ -7,7 +7,7 @@
 
 Divinci™ fork of Open-Parse 🤖🖤
 
->Not all functionality is supported in this fork. Supported: Ollama and Cloudflare, alongside the exisiting OpenAI embeddings.
+>Not all functionality is supported in this fork. Supported: 🦙 Ollama and 🟠☁️ Cloudflare, alongside the exisiting 🤖 OpenAI embeddings.
 
 _ _ _
 
