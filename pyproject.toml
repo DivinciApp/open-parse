@@ -21,6 +21,7 @@ dependencies = [
     "numpy",
     "requests",
     "backoff",
+    "markitdown",
 ]
 
 [project.urls]

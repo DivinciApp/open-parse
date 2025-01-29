@@ -11,12 +11,15 @@ from openparse.schemas import (
     TableElement,
     TextElement,
     TextSpan,
+    ParsedDocument,
 )
 
 __all__ = [
     # core
     "DocumentParser",
+    "MarkItDownDocumentParser",
     "Pdf",
+    "ParsedDocument",
     # Schemas
     "Bbox",
     "LineElement",

@@ -12,3 +12,4 @@ torchvision
 torchtext
 requests
 backoff
+markitdown

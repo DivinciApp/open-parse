@@ -4,38 +4,46 @@
 name: Test
 
 on:
+  workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: 
+      - main
   pull_request:
-    branches: ["main"]
+    branches: 
+      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: true # Automatically downloads LFS files
+          lfs: true
+          
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Create and activate a virtual environment (Unix)
+          cache: 'pip'
+          
+      - name: Create and activate a virtual environment
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           uv venv .venv
           echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
           echo "$PWD/.venv/bin" >> $GITHUB_PATH
+          
       - name: Install dependencies
         run: |
           uv pip install --upgrade pip
           uv pip install flake8 pytest
           if [ -f requirements-dev.txt ]; then uv pip install -r requirements-dev.txt; fi
-      - name: Test with pytest
+          
+      - name: Run tests
         run: |
-          pytest
+          pytest -v

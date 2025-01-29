@@ -1,6 +1,5 @@
-from pathlib import Path
-
 import pytest
+from pathlib import Path
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -14,3 +13,8 @@ def pytest_sessionstart(session):
             "Pytest must be run from the project root directory",
             returncode=1,
         )
+
+@pytest.fixture(scope="session")
+def project_root():
+    """Return the project root directory."""
+    return Path(__file__).parent.parent.parent

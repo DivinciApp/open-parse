@@ -5,9 +5,9 @@
 
 [![CodeQL](https://github.com/DivinciApp/open-parse/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/DivinciApp/open-parse/actions/workflows/github-code-scanning/codeql)
 
-*Divinci™ fork of Open-Parse 🤖🖤
+Divinci™ fork of Open-Parse 🤖🖤
 
-This fork supports Ollama and Cloudflare, alongside the exisiting OpenAI embeddings.
+>Not all functionality is supported in this fork. Supported: Ollama and Cloudflare, alongside the exisiting OpenAI embeddings.
 
 _ _ _
 

@@ -5,6 +5,7 @@ from collections import defaultdict, namedtuple
 from enum import Enum
 from functools import cached_property
 from typing import Any, List, Literal, Optional, Set, Tuple, Union
+from dataclasses import dataclass
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validator
 
@@ -18,6 +19,14 @@ bullet_regex = re.compile(
 
 ReadingOrder = namedtuple("ReadingOrder", "min_page y_position min_x0")
 
+@dataclass
+class FileMetadata:
+    """File metadata from document parsing."""
+    creation_date: Optional[dt] = None
+    last_modified_date: Optional[dt] = None
+    last_accessed_date: Optional[dt] = None
+    file_size: Optional[int] = None
+    file_type: Optional[str] = None
 
 class NodeVariant(Enum):
     TEXT = "text"
@@ -684,6 +693,18 @@ class Node(BaseModel):
         new_elems = self.elements + other.elements
         return Node(elements=new_elems)
 
+@dataclass
+class ParsedDocument:
+    """Represents a parsed document with extracted elements."""
+    nodes: List[Node]
+    filename: str
+    num_pages: int
+    coordinate_system: str
+    table_parsing_kwargs: Optional[dict] = None
+    creation_date: Optional[dt] = None
+    last_modified_date: Optional[dt] = None
+    last_accessed_date: Optional[dt] = None
+    file_size: Optional[int] = None
 
 #######################
 ### PARSED DOCUMENT ###
