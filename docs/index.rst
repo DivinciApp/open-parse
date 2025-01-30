@@ -1,18 +1,25 @@
-Welcome to OpenParse's documentation!
-===================================
+OpenParse Documentation
+======================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   README.md
-   api/openparse
+   README <../README.md>
+   api/modules
 
 API Reference
 ------------
 
-.. autosummary::
-   :toctree: generated
-   :recursive:
+.. toctree::
+   :maxdepth: 2
+   :caption: API Documentation:
 
-   openparse
+   api/openparse
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

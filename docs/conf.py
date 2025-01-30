@@ -1,20 +1,23 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+
+# Add source directory to path
+sys.path.insert(0, os.path.abspath('../src'))
 
 project = 'OpenParse'
-copyright = '2024'
+copyright = '2025'
 author = 'Michael Mooring'
-release = '0.7.2'
+release = '0.7.3'
 
 extensions = [
-    'sphinx.ext.autodoc',    # API documentation 
-    'sphinx.ext.napoleon',   # Support for Google/NumPy docstrings
-    'sphinx.ext.viewcode',   # Add links to source code
-    'myst_parser',          # Support markdown files
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'myst_parser',
+    'sphinx.ext.autosummary',
 ]
 
-# Source file parsers
+# Source file mappings
 source_suffix = {
     '.rst': 'restructuredtext',
     '.md': 'markdown',
@@ -22,22 +25,16 @@ source_suffix = {
 
 # Theme settings
 html_theme = 'sphinx_rtd_theme'
+html_static_path = ['_static']
 
-# Source settings
-source_dir = 'docs'
-root_doc = 'index'
-
-# Output options
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
-# API Documentation settings
+# AutoDoc settings
 autodoc_typehints = 'description'
 autodoc_member_order = 'bysource'
 autoclass_content = 'both'
 
-# Include markdown files
-myst_enable_extensions = [
-    "colon_fence",
-    "deflist"
-]
+# Build settings
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+# Include README.md
+root_doc = 'index'
