@@ -122,8 +122,8 @@ class DocumentParser:
         if self.processing_pipeline:
             nodes = self.processing_pipeline.run(nodes)
 
-        # Count pages from metadata or nodes
-        num_pages = metadata.get('page_count', len({node.bbox.page for node in nodes}) if nodes else 1)
+        # Use page_count directly from metadata since it's already set
+        num_pages = metadata.get('page_count', 1)
 
         return ParsedDocument(
             nodes=nodes,
