@@ -50,28 +50,51 @@ class DocumentParser:
             metadata = self._get_metadata(result, file_path)
             
             nodes = []
-            # The content is now directly in the result object
-            text = result.text if hasattr(result, 'text') else str(result)
             
-            # Create a single node for the entire content
-            element = TextElement(
-                text=text,
-                lines=(),
-                bbox=Bbox(
-                    page=1,  # Default to first page since we might not have page info
-                    page_height=1000,
-                    page_width=1000,
-                    x0=0,
-                    y0=0,
-                    x1=1000,
-                    y1=1000
-                ),
-                variant=NodeVariant.TEXT
-            )
-            nodes.append(Node(elements=(element,)))
+            # Debug logging
+            self.logger.debug(f"MarkItDown result type: {type(result)}")
+            self.logger.debug(f"MarkItDown result attributes: {dir(result)}")
             
-            self.logger.debug(f"🔢 Created {len(nodes)} nodes from document.")
+            # Try different ways to access the content
+            if hasattr(result, 'text'):
+                text = result.text
+            elif hasattr(result, 'content'):
+                text = result.content
+            elif hasattr(result, 'markdown'):
+                text = result.markdown
+            else:
+                text = str(result)
+            
+            self.logger.debug(f"Extracted text length: {len(text) if text else 0}")
+            
+            if text and len(text.strip()) > 0:
+                # Create chunks of approximately 1000 characters each
+                chunks = [text[i:i+1000] for i in range(0, len(text), 1000)]
+                
+                for chunk in chunks:
+                    if chunk.strip():  # Only create nodes for non-empty chunks
+                        element = TextElement(
+                            text=chunk.strip(),
+                            lines=(),
+                            bbox=Bbox(
+                                page=1,
+                                page_height=1000,
+                                page_width=1000,
+                                x0=0,
+                                y0=0,
+                                x1=1000,
+                                y1=1000
+                            ),
+                            variant=NodeVariant.TEXT
+                        )
+                        nodes.append(Node(elements=(element,)))
+            
+            self.logger.debug(f"🔢 Created {len(nodes)} nodes from document")
+            if len(nodes) == 0:
+                self.logger.warning("⚠️ No text content was extracted from the document")
+                
             return nodes, metadata
             
         except Exception as e:
+            self.logger.error(f"Error details: {str(e)}", exc_info=True)
             raise ValueError(f"❌ Failed to parse {file_path}: {str(e)}")
