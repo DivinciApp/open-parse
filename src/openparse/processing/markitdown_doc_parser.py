@@ -50,22 +50,19 @@ class DocumentParser:
             metadata = self._get_metadata(result, file_path)
             
             nodes = []
-            
-            # Get text from the correct attribute
             text = result.text_content
-            self.logger.debug(f"Extracted text content: {text[:100]}...")  # Log first 100 chars
+            self.logger.debug(f"📑 Extracted text content: {text[:100]}...")
             
             if text and len(text.strip()) > 0:
-                # Create chunks of approximately 1000 characters each
                 chunks = [text[i:i+1000] for i in range(0, len(text), 1000)]
                 
-                for chunk in chunks:
-                    if chunk.strip():  # Only create nodes for non-empty chunks
+                for i, chunk in enumerate(chunks, 1):
+                    if chunk.strip():
                         element = TextElement(
                             text=chunk.strip(),
                             lines=(),
                             bbox=Bbox(
-                                page=1,
+                                page=i,  # Each chunk gets a sequential page number
                                 page_height=1000,
                                 page_width=1000,
                                 x0=0,
@@ -75,14 +72,18 @@ class DocumentParser:
                             ),
                             variant=NodeVariant.TEXT
                         )
-                        nodes.append(Node(elements=(element,)))
+                        nodes.append(Node(
+                            elements=(element,),
+                            bbox=element.bbox  # Explicitly set the node's bbox
+                        ))
             
             self.logger.debug(f"🔢 Created {len(nodes)} nodes from document")
-            if len(nodes) == 0:
-                self.logger.warning("⚠️ No text content was extracted from the document")
-                
+            
+            # Add page count to metadata
+            metadata['page_count'] = len(nodes) if nodes else 1
+            
             return nodes, metadata
             
         except Exception as e:
-            self.logger.error(f"Error details: {str(e)}", exc_info=True)
+            self.logger.error(f"❌ Error details: {str(e)}", exc_info=True)
             raise ValueError(f"❌ Failed to parse {file_path}: {str(e)}")
