@@ -1,5 +1,5 @@
 from typing import Union, List, Optional, Dict, Tuple
-from datetime import datetime, date
+from datetime import date
 import logging
 from pathlib import Path
 from markitdown import MarkItDown
@@ -25,7 +25,7 @@ class DocumentParser:
                     result = self.parse(file)
                     results.append(result)
                 except Exception as e:
-                    self.logger.error(f"Failed to parse {file}: {e}")
+                    self.logger.error(f"❌ Failed to parse {file}: {e}")
         return results
     
 
@@ -34,8 +34,8 @@ class DocumentParser:
         stats = file_path.stat()
         return {
             "creation_date": None,
-            "last_modified_date": date.fromtimestamp(stats.st_mtime),  # Convert to date
-            "last_accessed_date": date.fromtimestamp(stats.st_atime),  # Convert to date
+            "last_modified_date": date.fromtimestamp(stats.st_mtime),
+            "last_accessed_date": date.fromtimestamp(stats.st_atime),
             "file_size": stats.st_size,
             "file_type": file_path.suffix.lower()
         }
@@ -44,26 +44,35 @@ class DocumentParser:
         """Parse document into nodes using MarkItDown."""
         file_path = Path(file)
         if file_path.suffix.lower() not in self.SUPPORTED_FORMATS:
-            raise ValueError(f"Unsupported file format: {file_path.suffix}")
+            raise ValueError(f"❌ Unsupported file format: {file_path.suffix}")
             
         try:
             result = self.parser.convert(str(file_path))
             metadata = self._get_metadata(result, file_path)
             
-            # Create text element from markdown content
-            element = TextElement(
-                text=result.text_content,
-                lines=(),  # No line-level info from MarkItDown
-                bbox=Bbox(
-                    page=1,
-                    page_height=1000,
-                    page_width=1000,
-                    x0=0, y0=0,
-                    x1=1000, y1=1000
-                ),
-                variant=NodeVariant.TEXT
-            )
+            nodes = []
+            for section in result.sections:
+                if not section.text.strip():
+                    continue
+                    
+                element = TextElement(
+                    text=section.text,
+                    lines=(),
+                    bbox=Bbox(
+                        page=section.page_number,
+                        page_height=section.page_height or 1000,
+                        page_width=section.page_width or 1000,
+                        x0=section.x0 or 0,
+                        y0=section.y0 or 0,
+                        x1=section.x1 or 1000,
+                        y1=section.y1 or 1000
+                    ),
+                    variant=NodeVariant.TEXT
+                )
+                nodes.append(Node(elements=(element,)))
             
-            return [Node(elements=(element,))], metadata
+            self.logger.debug(f"🔢 Created {len(nodes)} nodes from {len(result.sections)} sections.")
+            return nodes, metadata
+            
         except Exception as e:
-            raise ValueError(f"Failed to parse {file_path}: {str(e)}")
+            raise ValueError(f"❌ Failed to parse {file_path}: {str(e)}")

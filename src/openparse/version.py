@@ -1,8 +1,8 @@
-OPEN_PARSE_VERSION = "0.7.1"
+OPEN_PARSE_VERSION = "0.7.3"
 
 
 def version_info() -> str:
-    """Return complete version information for OpenParse and its dependencies."""
+    """Return complete version information for Open-Parse and its dependencies."""
     import importlib.metadata as importlib_metadata
     import platform
     import sys
@@ -18,8 +18,20 @@ def version_info() -> str:
         "torchvision",
         "transformers",
         "tokenizers",
+        "pillow",
         "PyMuPDF",
         "pydantic",
+        "pdfminer.six",
+        "tiktoken",
+        "numpy",
+        "openai",
+        "torch"
+        "transformers",
+        "torchvision",
+        "torchtext",
+        "requests",
+        "backoff",
+        "markitdown"
     }
     related_packages = []
 

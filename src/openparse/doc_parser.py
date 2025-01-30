@@ -121,10 +121,14 @@ class DocumentParser:
         """Process single file with MarkItDown."""
         if self.processing_pipeline:
             nodes = self.processing_pipeline.run(nodes)
+
+        # Count pages from metadata or nodes
+        num_pages = metadata.get('page_count', len({node.bbox.page for node in nodes}) if nodes else 1)
+
         return ParsedDocument(
             nodes=nodes,
             filename=file_path.name,
-            num_pages=1,
+            num_pages=num_pages,
             coordinate_system=consts.COORDINATE_SYSTEM,
             table_parsing_kwargs=None,
             **metadata

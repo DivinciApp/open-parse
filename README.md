@@ -66,9 +66,71 @@ Open Parse is designed to fill this gap by providing a flexible, easy-to-use lib
     <img src="https://sergey-filimonov.nyc3.digitaloceanspaces.com/open-parse/marked-up-doc-2.webp" width="250" />
 </p>
 
-## Example
+## Examples
 
-#### Basic Example
+## MarkItDown Integration
+
+Open-Parse now supports [MarkItDown](https://github.com/microsoft/markitdown) for enhanced document parsing:
+
+```python
+from openparse import DocumentParser
+
+# Initialize parser with MarkItDown
+parser = DocumentParser(use_markitdown=True)
+
+# Parse single document
+result = parser.parse("document.docx")
+
+# Parse directory of documents
+results = parser.parse("./documents/", batch_size=2)
+```
+
+``` python
+from openparse import DocumentParser
+from openparse.processing import SemanticIngestionPipeline
+
+# Create pipeline
+semantic_pipeline = SemanticIngestionPipeline(
+    min_tokens=50,
+    max_tokens=1000,
+    embeddings_provider="ollama"
+)
+
+# Initialize parser with pipeline
+parser = DocumentParser(
+    use_markitdown=True,
+    processing_pipeline=semantic_pipeline
+)
+
+# Parse document
+result = parser.parse("document.docx")
+```
+
+### Supported File Types
+- PDF documents
+- Word documents (.docx)
+- PowerPoint (.pptx)
+- Excel (.xlsx)
+- Text files (.txt)
+- Markdown (.md)
+- Batch Processing
+
+### Process multiple documents efficiently:
+```python
+# Process directory with custom batch size
+results = parser.parse(
+    "./documents/",
+    batch_size=5
+)
+
+# Access results
+for doc in results:
+    print(f"Document: {doc.filename}")
+    for node in doc.nodes:
+        print(node.text)
+```
+
+#### Classic Example
 
 ```python
 import openparse
