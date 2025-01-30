@@ -51,21 +51,9 @@ class DocumentParser:
             
             nodes = []
             
-            # Debug logging
-            self.logger.debug(f"MarkItDown result type: {type(result)}")
-            self.logger.debug(f"MarkItDown result attributes: {dir(result)}")
-            
-            # Try different ways to access the content
-            if hasattr(result, 'text'):
-                text = result.text
-            elif hasattr(result, 'content'):
-                text = result.content
-            elif hasattr(result, 'markdown'):
-                text = result.markdown
-            else:
-                text = str(result)
-            
-            self.logger.debug(f"Extracted text length: {len(text) if text else 0}")
+            # Get text from the correct attribute
+            text = result.text_content
+            self.logger.debug(f"Extracted text content: {text[:100]}...")  # Log first 100 chars
             
             if text and len(text.strip()) > 0:
                 # Create chunks of approximately 1000 characters each
