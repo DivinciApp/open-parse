@@ -28,7 +28,6 @@ class DocumentParser:
                     self.logger.error(f"❌ Failed to parse {file}: {e}")
         return results
     
-
     def _get_metadata(self, result, file_path: Path) -> Dict:
         """Extract metadata from MarkItDown result."""
         stats = file_path.stat()
@@ -47,31 +46,31 @@ class DocumentParser:
             raise ValueError(f"❌ Unsupported file format: {file_path.suffix}")
             
         try:
-            result = self.parser.convert(str(file_path))
+            result = self.parser.convert_local(str(file_path))
             metadata = self._get_metadata(result, file_path)
             
             nodes = []
-            for section in result.sections:
-                if not section.text.strip():
-                    continue
-                    
-                element = TextElement(
-                    text=section.text,
-                    lines=(),
-                    bbox=Bbox(
-                        page=section.page_number,
-                        page_height=section.page_height or 1000,
-                        page_width=section.page_width or 1000,
-                        x0=section.x0 or 0,
-                        y0=section.y0 or 0,
-                        x1=section.x1 or 1000,
-                        y1=section.y1 or 1000
-                    ),
-                    variant=NodeVariant.TEXT
-                )
-                nodes.append(Node(elements=(element,)))
+            # The content is now directly in the result object
+            text = result.text if hasattr(result, 'text') else str(result)
             
-            self.logger.debug(f"🔢 Created {len(nodes)} nodes from {len(result.sections)} sections.")
+            # Create a single node for the entire content
+            element = TextElement(
+                text=text,
+                lines=(),
+                bbox=Bbox(
+                    page=1,  # Default to first page since we might not have page info
+                    page_height=1000,
+                    page_width=1000,
+                    x0=0,
+                    y0=0,
+                    x1=1000,
+                    y1=1000
+                ),
+                variant=NodeVariant.TEXT
+            )
+            nodes.append(Node(elements=(element,)))
+            
+            self.logger.debug(f"🔢 Created {len(nodes)} nodes from document.")
             return nodes, metadata
             
         except Exception as e:
