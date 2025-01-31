@@ -15,3 +15,6 @@ torchtext
 requests
 backoff
 markitdown
+zipfile
+tempfile
+shutil

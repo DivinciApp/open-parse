@@ -25,13 +25,16 @@ def version_info() -> str:
         "tiktoken",
         "numpy",
         "openai",
-        "torch"
+        "torch",
         "transformers",
         "torchvision",
         "torchtext",
         "requests",
         "backoff",
-        "markitdown"
+        "markitdown",
+        "zipfile",
+        "tempfile",
+        "shutil"
     }
     related_packages = []
 
