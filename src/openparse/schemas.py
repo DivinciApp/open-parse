@@ -1,5 +1,5 @@
-import datetime
 import datetime as dt
+from datetime import datetime
 import re
 import uuid
 from collections import defaultdict, namedtuple
