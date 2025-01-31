@@ -2,8 +2,23 @@ from typing import Union, List, Optional, Dict, Tuple
 from datetime import date
 import logging
 from pathlib import Path
-from markitdown import MarkItDown
+
 from openparse.schemas import Node, TextElement, Bbox, FileMetadata, NodeVariant
+
+try:
+    from markitdown.markitdown import MarkItDown
+except ImportError:
+    try:
+        from markitdown import MarkItDown
+    except ImportError:
+        # Create a stub class for testing
+        class MarkItDown:
+            """Stub class for when markitdown is not available"""
+            def __init__(self, *args, **kwargs):
+                raise ImportError(
+                    "markitdown package is not properly installed. "
+                    "Please install it with `pip install markitdown`"
+                )
 
 class DocumentParser:
     """Parser using Microsoft's MarkItDown for multiple file formats."""
