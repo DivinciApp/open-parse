@@ -56,7 +56,7 @@ jobs:
         run: |
           export PYTHONPATH=$PWD/src:$PYTHONPATH
           cd $GITHUB_WORKSPACE
-          pytest -v
+          pytest ./ -v
 
       - name: Upload test results
         if: always()
