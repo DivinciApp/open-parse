@@ -1,4 +1,3 @@
-import datetime as dt
 from datetime import datetime
 import re
 import uuid
@@ -24,8 +23,8 @@ ReadingOrder = namedtuple("ReadingOrder", "min_page y_position min_x0")
 class FileMetadata:
     """File metadata from document parsing."""
     creation_date: Optional[datetime] = None
-    last_modified_date: Optional[dt] = None
-    last_accessed_date: Optional[dt] = None
+    last_modified_date: Optional[datetime] = None
+    last_accessed_date: Optional[datetime] = None
     file_size: Optional[int] = None
     file_type: Optional[str] = None
 
@@ -702,9 +701,9 @@ class ParsedDocument:
     num_pages: int
     coordinate_system: str
     table_parsing_kwargs: Optional[dict] = None
-    creation_date: Optional[dt] = None
-    last_modified_date: Optional[dt] = None
-    last_accessed_date: Optional[dt] = None
+    creation_date: Optional[datetime] = None
+    last_modified_date: Optional[datetime] = None
+    last_accessed_date: Optional[datetime] = None
     file_size: Optional[int] = None
 
 #######################
@@ -723,9 +722,9 @@ class ParsedDocument(BaseModel):
     num_pages: int
     coordinate_system: Literal["top-left", "bottom-left"] = "bottom-left"
     table_parsing_kwargs: Optional[dict] = None
-    last_modified_date: Optional[dt.date] = None
-    last_accessed_date: Optional[dt.date] = None
-    creation_date: Optional[dt.date] = None
+    last_modified_date: Optional[datetime.date] = None
+    last_accessed_date: Optional[datetime.date] = None
+    creation_date: Optional[datetime.date] = None
     file_size: Optional[int] = None
 
     @cached_property
