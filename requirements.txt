@@ -1,5 +1,5 @@
 PyMuPDF>=1.23.2
-pillow>=11.1.0
+pillow>=8.3
 pydantic>=2.0
 pypdf>=4.0.0
 pdfminer.six>=20200401
