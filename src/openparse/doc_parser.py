@@ -15,6 +15,10 @@ from openparse.schemas import ImageElement
 from openparse.processing.markitdown_doc_parser import DocumentParser as MarkItDownParser
 from openparse.config import config, Config
 
+import zipfile
+import tempfile
+import shutil
+
 IngestionPipelineType = TypeVar("IngestionPipelineType", bound=IngestionPipeline)
 
 
@@ -119,6 +123,7 @@ class DocumentParser:
         metadata: Dict
     ) -> ParsedDocument:
         """Process single file with MarkItDown."""
+        # Process nodes through pipeline if configured
         if self.processing_pipeline:
             nodes = self.processing_pipeline.run(nodes)
 
@@ -126,12 +131,15 @@ class DocumentParser:
         num_pages = metadata.get('page_count', 1)
 
         return ParsedDocument(
-            nodes=nodes,
+            nodes=nodes,  # Make sure we're passing the processed nodes
             filename=file_path.name,
             num_pages=num_pages,
             coordinate_system=consts.COORDINATE_SYSTEM,
             table_parsing_kwargs=None,
-            **metadata
+            creation_date=metadata.get('creation_date'),
+            last_modified_date=metadata.get('last_modified_date'),
+            last_accessed_date=metadata.get('last_accessed_date'),
+            file_size=metadata.get('file_size')
         )
 
     def _process_pdfminer(
@@ -223,6 +231,24 @@ class DocumentParser:
             if file_path.is_dir():
                 files = list(file_path.glob("*"))
                 return self._process_directory(files, batch_size)
+            elif file_path.suffix.lower() == '.zip':
+                # Extract files from ZIP and process each separately
+                with zipfile.ZipFile(file_path, 'r') as zip_ref:
+                    files = []
+                    for filename in zip_ref.namelist():
+                        # Extract to temporary directory
+                        temp_dir = Path(tempfile.mkdtemp())
+                        extracted_path = temp_dir / Path(filename).name
+                        with zip_ref.open(filename) as source, open(extracted_path, 'wb') as target:
+                            shutil.copyfileobj(source, target)
+                        files.append(extracted_path)
+                    
+                    # Process extracted files
+                    try:
+                        return self._process_directory(files, batch_size)
+                    finally:
+                        # Clean up temp files
+                        shutil.rmtree(temp_dir)
             
             nodes, metadata = self.markitdown_parser.parse(file_path)
             return self._process_markitdown(file_path, nodes, metadata)

@@ -8,7 +8,7 @@ from openparse.schemas import Node, TextElement, Bbox, FileMetadata, NodeVariant
 class DocumentParser:
     """Parser using Microsoft's MarkItDown for multiple file formats."""
     
-    SUPPORTED_FORMATS = {'.pdf', '.docx', '.pptx', '.xlsx', '.html', '.txt', '.json', '.xml'}
+    SUPPORTED_FORMATS = {'.pdf', '.docx', '.pptx', '.xlsx', '.html', '.txt', '.json', '.xml', '.zip'}
     
     def __init__(self, use_ocr: bool = False, llm_client: Optional[object] = None):
         self.parser = MarkItDown(llm_client=llm_client) if llm_client else MarkItDown()
@@ -18,6 +18,7 @@ class DocumentParser:
     def parse_batch(self, files: List[Path], batch_size: int = 1) -> List[Tuple[List[Node], FileMetadata]]:
         """Process multiple files in batches."""
         results = []
+        
         for batch in range(0, len(files), batch_size):
             batch_files = files[batch:batch + batch_size]
             for file in batch_files:
@@ -26,6 +27,7 @@ class DocumentParser:
                     results.append(result)
                 except Exception as e:
                     self.logger.error(f"❌ Failed to parse {file}: {e}")
+        
         return results
     
     def _get_metadata(self, result, file_path: Path) -> Dict:
@@ -36,9 +38,36 @@ class DocumentParser:
             "last_modified_date": date.fromtimestamp(stats.st_mtime),
             "last_accessed_date": date.fromtimestamp(stats.st_atime),
             "file_size": stats.st_size,
-            "file_type": file_path.suffix.lower()
+            "file_type": file_path.suffix.lower(),
+            "is_zip": file_path.suffix.lower() == '.zip'
         }
-    
+
+    def _text_to_nodes(self, text: str, start_page: int = 1) -> List[Node]:
+        """Convert text content to nodes."""
+        nodes = []
+        if text and len(text.strip()) > 0:
+            chunks = [text[i:i+1000] for i in range(0, len(text), 1000)]
+            
+            for i, chunk in enumerate(chunks, start_page):
+                if chunk.strip():
+                    element = TextElement(
+                        text=chunk.strip(),
+                        lines=(),
+                        bbox=Bbox(
+                            page=i,
+                            page_height=1000,
+                            page_width=1000,
+                            x0=0, y0=0,
+                            x1=1000, y1=1000
+                        ),
+                        variant=NodeVariant.TEXT
+                    )
+                    nodes.append(Node(
+                        elements=(element,),
+                        bbox=element.bbox
+                    ))
+        return nodes
+
     def parse(self, file: Union[str, Path]) -> tuple[List[Node], FileMetadata]:
         """Parse document into nodes using MarkItDown."""
         file_path = Path(file)
@@ -46,37 +75,17 @@ class DocumentParser:
             raise ValueError(f"❌ Unsupported file format: {file_path.suffix}")
             
         try:
-            result = self.parser.convert_local(str(file_path))
+            # Pass file extension for ZIP handling
+            result = self.parser.convert_local(
+                str(file_path), 
+                file_extension=file_path.suffix.lower()
+            )
             metadata = self._get_metadata(result, file_path)
             
-            nodes = []
             text = result.text_content
             self.logger.debug(f"📑 Extracted text content: {text[:100]}...")
             
-            if text and len(text.strip()) > 0:
-                chunks = [text[i:i+1000] for i in range(0, len(text), 1000)]
-                
-                for i, chunk in enumerate(chunks, 1):
-                    if chunk.strip():
-                        element = TextElement(
-                            text=chunk.strip(),
-                            lines=(),
-                            bbox=Bbox(
-                                page=i,  # Each chunk gets a sequential page number
-                                page_height=1000,
-                                page_width=1000,
-                                x0=0,
-                                y0=0,
-                                x1=1000,
-                                y1=1000
-                            ),
-                            variant=NodeVariant.TEXT
-                        )
-                        nodes.append(Node(
-                            elements=(element,),
-                            bbox=element.bbox  # Explicitly set the node's bbox
-                        ))
-            
+            nodes = self._text_to_nodes(text)
             self.logger.debug(f"🔢 Created {len(nodes)} nodes from document")
             
             # Add page count to metadata
