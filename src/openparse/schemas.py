@@ -722,10 +722,12 @@ class ParsedDocument(BaseModel):
     num_pages: int
     coordinate_system: Literal["top-left", "bottom-left"] = "bottom-left"
     table_parsing_kwargs: Optional[dict] = None
-    last_modified_date: Optional[datetime.date] = None
-    last_accessed_date: Optional[datetime.date] = None
-    creation_date: Optional[datetime.date] = None
+    last_modified_date: Optional[datetime] = None  # Changed from datetime.date
+    last_accessed_date: Optional[datetime] = None  # Changed from datetime.date
+    creation_date: Optional[datetime] = None       # Changed from datetime.date
     file_size: Optional[int] = None
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)  # Add this line
 
     @cached_property
     @computed_field
