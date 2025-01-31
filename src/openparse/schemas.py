@@ -1,3 +1,4 @@
+import datetime
 import datetime as dt
 import re
 import uuid
@@ -22,7 +23,7 @@ ReadingOrder = namedtuple("ReadingOrder", "min_page y_position min_x0")
 @dataclass
 class FileMetadata:
     """File metadata from document parsing."""
-    creation_date: Optional[dt] = None
+    creation_date: Optional[datetime] = None
     last_modified_date: Optional[dt] = None
     last_accessed_date: Optional[dt] = None
     file_size: Optional[int] = None
