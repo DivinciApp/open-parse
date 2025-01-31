@@ -1,24 +1,13 @@
-from typing import Union, List, Optional, Dict, Tuple
-from datetime import date
-import logging
+from __future__ import annotations
+from typing import List, Union, Tuple
 from pathlib import Path
-
-from openparse.schemas import Node, TextElement, Bbox, FileMetadata, NodeVariant
-
 try:
-    from markitdown.markitdown import MarkItDown
+    from typing import Literal  # Python 3.8+ specific
 except ImportError:
-    try:
-        from markitdown import MarkItDown
-    except ImportError:
-        # Create a stub class for testing
-        class MarkItDown:
-            """Stub class for when markitdown is not available"""
-            def __init__(self, *args, **kwargs):
-                raise ImportError(
-                    "markitdown package is not properly installed. "
-                    "Please install it with `pip install markitdown`"
-                )
+    from typing_extensions import Literal  # fallback for Python 3.7
+
+from markitdown import MarkItDown
+from openparse.schemas import Node, FileMetadata
 
 class DocumentParser:
     """Parser using Microsoft's MarkItDown for multiple file formats."""
@@ -83,7 +72,7 @@ class DocumentParser:
                     ))
         return nodes
 
-    def parse(self, file: Union[str, Path]) -> tuple[List[Node], FileMetadata]:
+    def parse(self, file: Union[str, Path]) -> Tuple[List[Node], FileMetadata]:
         """Parse document into nodes using MarkItDown."""
         file_path = Path(file)
         if file_path.suffix.lower() not in self.SUPPORTED_FORMATS:
