@@ -1,0 +1,66 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: pytest
+
+on:
+  workflow_dispatch:
+  push:
+    branches: 
+      - main
+      - master  # Add this in case the default branch is named master
+  pull_request:
+    branches: 
+      - main
+      - master  # Add this in case the default branch is named master
+
+permissions:  # Add explicit permissions
+  contents: read
+  pull-requests: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"  # Add explicit condition
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1  # Shallow clone for faster checkout
+          
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          
+      - name: Create and activate a virtual environment
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uv venv .venv
+          echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
+          echo "$PWD/.venv/bin" >> $GITHUB_PATH
+          
+      - name: Install dependencies
+        run: |
+          uv pip install --upgrade pip
+          uv pip install flake8 pytest
+          if [ -f requirements-dev.txt ]; then uv pip install -r requirements-dev.txt; fi
+          
+      - name: Run tests
+        run: |
+          pytest -v
+
+      - name: Upload test results
+        if: always()  # Run even if tests fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: |
+            .pytest_cache
+            test-results
