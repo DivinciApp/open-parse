@@ -12,7 +12,7 @@ version = "0.7.1"
 authors = [{name = "Sergey Filimonov", email = "hello@sergey.fyi"}]
 dependencies = [
     "PyMuPDF>=1.23.2",
-    "pillow>=11.1.0",
+    "pillow>=9.5.0",  # This version supports Python 3.8
     "pydantic>=2.0",
     "pypdf>=4.0.0",
     "pdfminer.six>=20200401",
