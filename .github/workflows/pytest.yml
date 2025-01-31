@@ -54,6 +54,8 @@ jobs:
           
       - name: Run tests
         run: |
+          export PYTHONPATH=$PWD/src:$PYTHONPATH
+          cd $GITHUB_WORKSPACE
           pytest -v
 
       - name: Upload test results
